@@ -6,6 +6,8 @@ void yeniHesapAcildi(){
 	hesapNoSayaci++;
 }
 
+
+
 class Hesap{
 	
 	
@@ -15,7 +17,6 @@ class Hesap{
 		int hesapNo;
 		string hesapTuru;
 
-
 	void ParaYatir(int tutar){
 		bakiye+= tutar;
 	};
@@ -24,6 +25,7 @@ class Hesap{
 		if(tutar<bakiye){
 			bakiye-=tutar;
 			return true;
+			
 		}else{
 			cout << "Yetersiz Bakiye";
 			return false;
@@ -38,14 +40,19 @@ class Hesap{
 		}
 	}
 };
- 
+
+
 class Musteri  {
 	public:
 		Hesap hesap[10];
 		string isim; 
 		int bakiye;	
 		string sifre;
+ 
+	
 };	
+
+
 
  
 void hesaplarimiGetir(Musteri m){
@@ -74,7 +81,7 @@ void hesapIslemleri(Musteri m){
 
 		switch(secim){
 			case 1: 
-				cout << "Tutarý Giriniz: ";
+				cout << "TutarÄ± Giriniz: ";
 				cin >> tutar;
 				sonuc = m.hesap[1].ParaCek(tutar);
 
@@ -86,14 +93,14 @@ void hesapIslemleri(Musteri m){
 				break;
 			
 			case 2:
-				cout << "Tutarý Giriniz: ";
+				cout << "TutarÄ± Giriniz: ";
 				cin >> tutar;
 
 				m.hesap[1].ParaYatir(tutar);
 				break;
 
 			case 3:
-				cout << "Yeni Hesap Açma Ýþlemleri Sürüyor. . .";
+				cout << "Yeni Hesap AÃ§ma Ä°ÅŸlemleri SÃ¼rÃ¼yor. . .";
 		}
 }
 
@@ -108,14 +115,24 @@ void butunHesaplariGetir(Musteri m){
 	}
 }
 
-Hesap hesapGetir(Musteri m, int hNo){
+int hesapIndexGetir(Musteri m, int hNo){
 	for(int j=0; j<10; j++){
 		if(m.hesap[j].hesapNo == hNo){
-			return m.hesap[j]; 
+			return j; 
 		}
 	} 
 }
  
+ int bosHesapIndexi(Musteri m){
+	 for(int j=0; j<10; j++){
+		if(m.hesap[j].hesapAcildiMi == false){
+			return j;
+		}
+	} 
+ }
+
+
+
 /*__________________________________________________________________________*/
 string musteriGirisTuru = ""; 
 int maxMusteri = 2000;
@@ -132,7 +149,7 @@ int main(int argc, char** argv) {
 	
 
 	/*
-	 Denemek icin bir müsteri olusturduk.
+	 Denemek icin bir mÃ¼steri olusturduk.
 	*/
 	musteriler[0].isim = "a"; 
 	musteriler[0].bakiye = 1000; 
@@ -143,6 +160,7 @@ int main(int argc, char** argv) {
 	
 	musteriler[0].hesap[1].hesapAcildiMi = true;
 	musteriler[0].hesap[1].hesapNo = 1;
+	 
 
 	/*
 	 hesap no yu kontrol edebilmek icin her acilan hesap sonrasi yeniHesapAcildi() fonksiyonu 
@@ -189,7 +207,7 @@ int main(int argc, char** argv) {
 	 			Kayit olma islemleri 
 			*/
 			int temp = 0;
-			cout << "Ýlk Hesap Turunu Seciniz\n";
+			cout << "Ä°lk Hesap Turunu Seciniz\n";
 			cout << "1- Ticari Musteri\n";
 			cout << "2- Bireysel Musteri\n";
 			cin >> temp;
@@ -205,9 +223,10 @@ int main(int argc, char** argv) {
 			cout << "Sifrenizi giriniz: ";
 			cin >> musteriler[hesapNoSayaci].sifre;
 			
+			
 			musteriler[hesapNoSayaci].hesap[0].hesapTuru = musteriGirisTuru; 
 			musteriler[hesapNoSayaci].hesap[0].hesapNo = hesapNoSayaci;
-			
+			musteriler[hesapNoSayaci].hesap[0].hesapAcildiMi = true;
 			
 			cout << "Kayit Basarili\n";
 			cout << "Hesap Turunuz: "<<musteriler[hesapNoSayaci].hesap[0].hesapTuru;
@@ -227,7 +246,7 @@ int main(int argc, char** argv) {
 				*/
 			while(!giris){
 				std::cout << "Kayitiniz Tamamlandi simdi Giris Yapabilirsiniz\n";
-				std::cout << "Hesap Ýsmi: ";
+				std::cout << "Hesap Ä°smi: ";
 				std::cin >> loginIsim;
 				std::cout << "Sifre: ";
 				std::cin >> loginSifre;
@@ -254,15 +273,15 @@ int main(int argc, char** argv) {
 	cin.ignore();
 	cin.get();
 	system("cls");
-	Hesap h ;
+	int h ;
 	bool logout = false;
+	int secimHesapNo;
 	
 	
-	
-	//////// Müsterinin Yeniden islem yapabilmesi icin islemleri While icinde
+	//////// MÃ¼sterinin Yeniden islem yapabilmesi icin islemleri While icinde
 	while(!logout){
  
-		int secimHesapNo;
+	
 		std::cout << "**************************************************************\n";
 		
 		std::cout << "islem yapmak istediginiz hesabi seciniz\n\n";
@@ -273,12 +292,12 @@ int main(int argc, char** argv) {
 		butunHesaplariGetir(currentMusteri);
 		cin >> secimHesapNo;
 		
-			/*
-	 			kullanicinin islem yapmak istedigi hesap getiriliyor
-			*/
-		h = hesapGetir(currentMusteri, secimHesapNo);
-		cout <<"Hesap no : "<< h.hesapNo << "\n";
-		cout << "Bakiye: "<< h.bakiye << "\n"; 
+		/*
+	 		kullanicinin islem yapmak istedigi hesap getiriliyor
+		*/
+		h = hesapIndexGetir(currentMusteri, secimHesapNo);
+		cout <<"Hesap no : "<< currentMusteri.hesap[h].hesapNo << "\n";
+		cout << "Bakiye: "<< currentMusteri.hesap[h].bakiye << "\n"; 
 
 		int hesapIslemSecimi = 0;
 		cout<< "Hesap ile yapmak istediginiz islemi seciniz. \n";
@@ -289,7 +308,8 @@ int main(int argc, char** argv) {
 
 		int yatirilacakTutar = 0;
 		int cekilecekTutar = 0;
-		
+		int bosHesapSirasi = 0;
+		int yeniAcilacakHesapTuru = 0;
 			/*
 	 			Kullanicinin hesap ile yapmak istedigi islem secme kismi
 			*/
@@ -298,8 +318,8 @@ int main(int argc, char** argv) {
 				cout << "Yatirilacak tutari Giriniz: ";
 				cin >> yatirilacakTutar;
 				
-				h.ParaYatir(yatirilacakTutar);
-				cout << "\nBakiye = "<< h.bakiye;
+				currentMusteri.hesap[h].ParaYatir(yatirilacakTutar);
+				cout << "\nBakiye = "<< currentMusteri.hesap[h].bakiye;
 				cout << "\nIsleminiz tamamlandi Bankamiz iyi gunler diler";
 				break;
 			
@@ -307,18 +327,34 @@ int main(int argc, char** argv) {
 				cout << "Cekilecek tutari Giriniz: ";
 				cin >> cekilecekTutar;
 				
-				h.ParaCek(cekilecekTutar);
-				cout << "\nBakiye = "<< h.bakiye;
+				currentMusteri.hesap[h].ParaCek(cekilecekTutar);
+				cout << "\nBakiye = "<< currentMusteri.hesap[h].bakiye;
 				cout << "\nIsleminiz tamamlandi Bankamiz iyi gunler diler";
 				break;
 			
 			case 3: 
 				// YENI HESAP ACMA ISLEMLERI
+				cout << "\nHesap Turunu Seciniz";
+				cout << "\n1- Ticari hesap";
+				cout << "\n2- Bireysel hesap";
+				cin >> yeniAcilacakHesapTuru;
+
+				bosHesapSirasi = bosHesapIndexi(currentMusteri);
+				cout << "\nbos hesap indexi = " << bosHesapSirasi; 
+				currentMusteri.hesap[bosHesapSirasi].hesapAcildiMi = true;
+				currentMusteri.hesap[bosHesapSirasi].hesapNo = hesapNoSayaci;
+				if(yeniAcilacakHesapTuru == 1){
+					currentMusteri.hesap[bosHesapSirasi].hesapTuru = "Ticari Hesap";
+				}else{
+					currentMusteri.hesap[bosHesapSirasi].hesapTuru = "Bireysel Hesap";
+				}
+ 				yeniHesapAcildi();
+
 			break;
 		}
 
 		string cikisSecimi = "";
-		cout<< "\nCikis Yapmak Ýstiyor musunuz? (e & evet  /  h & hayir)";
+		cout<< "\nCikis Yapmak Ä°stiyor musunuz? (e & evet  /  h & hayir)";
 		cin >> cikisSecimi;
 
 		if(cikisSecimi == "e" || cikisSecimi == "evet" ){
@@ -330,4 +366,3 @@ int main(int argc, char** argv) {
 
 	return 0;
 }
-
