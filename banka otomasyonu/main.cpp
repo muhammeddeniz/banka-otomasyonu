@@ -1,5 +1,8 @@
 #include <iostream> 
+#include <time.h>
+
 using namespace std; 
+
 
 int hesapNoSayaci = 0;
 void yeniHesapAcildi(){
@@ -131,7 +134,31 @@ int hesapIndexGetir(Musteri m, int hNo){
 	} 
  }
 
+int islemSayaci = 0;
 
+int yeniIslemYapildi(){
+	islemSayaci++;
+}
+
+class  Islem{
+	public: 
+		bool islemYapildiMi = false;
+		string islemTuru;
+		int islemMiktari;
+		Musteri islemiYapanMusteri;
+		int islemiYapanHesapNo;
+		string islemZamani;
+};
+ 
+ const string currentTime() {
+    time_t     now = time(0);
+    struct tm  tstruct;
+    char       buf[80];
+    tstruct = *localtime(&now);
+    strftime(buf, sizeof(buf), "tarih: %Y-%m-%d / saat: %X", &tstruct);
+
+    return buf;
+};
 
 /*__________________________________________________________________________*/
 string musteriGirisTuru = ""; 
@@ -145,23 +172,35 @@ Musteri currentMusteri ;
 
 int main(int argc, char** argv) {
 	
-	 Musteri musteriler[maxMusteri];
-	
+	Musteri musteriler[maxMusteri];
+	Islem islemHafizasi[1000];
 
 	/*
 	 Denemek icin bir müsteri olusturduk.
 	*/
-	musteriler[0].isim = "a"; 
-	musteriler[0].bakiye = 1000; 
-	musteriler[0].sifre = "123";
-	musteriler[0].hesap[0].hesapAcildiMi = true;
-	musteriler[0].hesap[0].hesapNo = 0;
-	musteriler[0].hesap[0].bakiye = 990;
-	
-	musteriler[0].hesap[1].hesapAcildiMi = true;
-	musteriler[0].hesap[1].hesapNo = 1;
-	 
 
+	musteriler[hesapNoSayaci].isim = "a"; 
+	musteriler[hesapNoSayaci].bakiye = 1000; 
+	musteriler[hesapNoSayaci].sifre = "123";
+	musteriler[hesapNoSayaci].hesap[0].hesapAcildiMi = true;
+	
+	musteriler[hesapNoSayaci].hesap[0].hesapNo = 0;
+	musteriler[hesapNoSayaci].hesap[0].bakiye = 990;
+	
+	islemHafizasi[islemSayaci].islemYapildiMi = true;
+	islemHafizasi[islemSayaci].islemTuru = "Para Yatirma\n";
+	islemHafizasi[islemSayaci].islemMiktari = 990;
+	islemHafizasi[islemSayaci].islemiYapanMusteri = musteriler[hesapNoSayaci];
+	islemHafizasi[islemSayaci].islemiYapanHesapNo = 0;
+	islemHafizasi[islemSayaci].islemZamani = currentTime();
+	yeniIslemYapildi();
+
+	musteriler[hesapNoSayaci].hesap[1].hesapAcildiMi = true;
+	musteriler[hesapNoSayaci].hesap[1].hesapNo = 1;
+
+	
+
+	
 	/*
 	 hesap no yu kontrol edebilmek icin her acilan hesap sonrasi yeniHesapAcildi() fonksiyonu 
 	 hesap noyu arttiriyor
@@ -304,6 +343,7 @@ int main(int argc, char** argv) {
 		cout << "1- Para Yatir\n";
 		cout << "2- Para Cek\n";
 		cout << "3- Yeni Hesap Ac\n";
+		cout << "4- Hesap Ozeti Al\n";
 		cin >> hesapIslemSecimi;
 
 		int yatirilacakTutar = 0;
@@ -320,7 +360,13 @@ int main(int argc, char** argv) {
 				
 				currentMusteri.hesap[h].ParaYatir(yatirilacakTutar);
 				cout << "\nBakiye = "<< currentMusteri.hesap[h].bakiye;
-				cout << "\nIsleminiz tamamlandi Bankamiz iyi gunler diler";
+				islemHafizasi[islemSayaci].islemYapildiMi = true;
+				islemHafizasi[islemSayaci].islemTuru = "Para Yatirma\n";
+				islemHafizasi[islemSayaci].islemMiktari = yatirilacakTutar;
+				islemHafizasi[islemSayaci].islemiYapanMusteri = currentMusteri;
+				islemHafizasi[islemSayaci].islemiYapanHesapNo = currentMusteri.hesap[h].hesapNo;
+				islemHafizasi[islemSayaci].islemZamani = currentTime();
+				yeniIslemYapildi();
 				break;
 			
 			case 2:
@@ -329,7 +375,14 @@ int main(int argc, char** argv) {
 				
 				currentMusteri.hesap[h].ParaCek(cekilecekTutar);
 				cout << "\nBakiye = "<< currentMusteri.hesap[h].bakiye;
-				cout << "\nIsleminiz tamamlandi Bankamiz iyi gunler diler";
+				
+				islemHafizasi[islemSayaci].islemYapildiMi = true;
+				islemHafizasi[islemSayaci].islemTuru = "Para Cekme\n";
+				islemHafizasi[islemSayaci].islemMiktari = cekilecekTutar;
+				islemHafizasi[islemSayaci].islemiYapanMusteri = currentMusteri;
+				islemHafizasi[islemSayaci].islemiYapanHesapNo = currentMusteri.hesap[h].hesapNo;
+				islemHafizasi[islemSayaci].islemZamani = currentTime();
+				yeniIslemYapildi();
 				break;
 			
 			case 3: 
@@ -349,12 +402,22 @@ int main(int argc, char** argv) {
 					currentMusteri.hesap[bosHesapSirasi].hesapTuru = "Bireysel Hesap";
 				}
  				yeniHesapAcildi();
+				break;
 
-			break;
+			case 4:
+				for(int i=0; i<1000; i++){
+					if(islemHafizasi[i].islemiYapanHesapNo == currentMusteri.hesap[h].hesapNo && islemHafizasi[i].islemiYapanMusteri.isim == currentMusteri.isim && islemHafizasi[i].islemYapildiMi==true){
+						cout << "Islem Turu: " << islemHafizasi[i].islemTuru ;
+						cout << "Islem Tutari: " << islemHafizasi[i].islemMiktari << "\n";
+						cout << "Islem Yapilan Hesap No: " << islemHafizasi[i].islemiYapanHesapNo << "\n";
+						cout << "Islem Yapilan Musteri adi: " << islemHafizasi[i].islemiYapanMusteri.isim << "\n";
+						cout << "Islem Zamani: " << islemHafizasi[i].islemZamani << "\n\n";
+					}
+				}
 		}
 
 		string cikisSecimi = "";
-		cout<< "\nCikis Yapmak İstiyor musunuz? (e & evet  /  h & hayir)";
+		cout<< "\nCikis Yapmak istiyor musunuz? (e & evet  /  h & hayir)";
 		cin >> cikisSecimi;
 
 		if(cikisSecimi == "e" || cikisSecimi == "evet" ){
