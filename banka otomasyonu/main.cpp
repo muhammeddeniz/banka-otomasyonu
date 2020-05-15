@@ -22,7 +22,7 @@ class Hesap{
 	};
 	
 	bool ParaCek(int tutar){
-		if(tutar<bakiye){
+		if(tutar<=bakiye){
 			bakiye-=tutar;
 			return true;
 			
