@@ -142,13 +142,36 @@ int yeniIslemYapildi(){
 
 class  Islem{
 	public: 
-		bool islemYapildiMi = false;
+		bool islemYapildiMi;
 		string islemTuru;
 		int islemMiktari;
 		Musteri islemiYapanMusteri;
 		int islemiYapanHesapNo;
 		string islemZamani;
+	
+	Islem(){
+		islemYapildiMi = false;
+		islemTuru = "default";
+		islemMiktari = 0;
+		Musteri islemiYapanMusteri;
+	}
+
+	// overload çalışmıyor bu yüzden comment kısmına aldık 
+	// ostream& operator<<(ostream& output, const Islem& I)
+	// {
+    // 	output << "islem Miktari : " << I.islemMiktari << " Turu : " << I.islemTuru;
+    // 	return output;  
+	// }
+  
+ 	// ostream& operator<<(ostream& output, const Islem& I)
+	// {
+    // 	output << "Musteri ismi : " << I.islemiYapanMusteri.isim << "bakiye  : " << I.islemiYapanMusteri.bakiye;
+    //      return output; 
+	// },
+	 
 };
+ 
+
  
  const string currentTime() {
     time_t     now = time(0);
